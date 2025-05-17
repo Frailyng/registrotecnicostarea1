@@ -71,13 +71,40 @@ private fun TicketRow(
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        Text(modifier = Modifier.weight(1f), text = ticket.ticketId?.toString() ?: "N/A")
-        Text(
-            modifier = Modifier.weight(2f),
-            text = ticket.asunto,
-            style = MaterialTheme.typography.titleMedium
-        )
-        Text(modifier = Modifier.weight(2f), text = ticket.cliente)
+        Column(
+            modifier = Modifier
+                .weight(4f)
+                .padding(horizontal = 8.dp)
+        ) {
+            Text(
+                text = "ID: ${ticket.ticketId?.toString() ?: "N/A"}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                text = "Fecha: ${ticket.fecha}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                text = "Prioridad ID: ${ticket.prioridadId}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                text = "Cliente: ${ticket.cliente}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                text = "Asunto: ${ticket.asunto}",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = "Descripción: ${ticket.descripcion}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                text = "Técnico ID: ${ticket.tecnicoId?.toString() ?: "N/A"}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
         IconButton(onClick = onEdit) {
             Icon(Icons.Default.Edit, contentDescription = "Editar")
         }
