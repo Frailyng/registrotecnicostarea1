@@ -7,4 +7,8 @@ sealed class Screen{
     data object TecnicoList: Screen()
     @Serializable
     data class Tecnico(val tecnicoId: Int?) : Screen()
+    @Serializable
+    data object TicketsList : Screen()
+    @Serializable
+    data class Tickets(val ticketId: Int?) : Screen()
 }
