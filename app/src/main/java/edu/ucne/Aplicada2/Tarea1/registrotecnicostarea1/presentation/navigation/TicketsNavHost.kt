@@ -7,7 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.local.entities.TicketEntity
-import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tickets.TicketViewModel
+import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tickets.TicketsViewModel
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tickets.TicketListScreen
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tickets.TicketScreen
 
@@ -15,14 +15,14 @@ import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tickets.Tic
 fun TicketNavHost(
     navHostController: NavHostController,
     ticketList: List<TicketEntity>,
-    viewModel: TicketViewModel,
+    viewModel: TicketsViewModel,
     navController: NavController
 ) {
     NavHost(
         navController = navHostController,
         startDestination = Screen.TicketsList
     ) {
-        composable<Screen.Tickets> {
+        composable<Screen.TicketsList> {
             TicketListScreen(
                 ticketList = ticketList,
                 onEdit = { ticketId ->

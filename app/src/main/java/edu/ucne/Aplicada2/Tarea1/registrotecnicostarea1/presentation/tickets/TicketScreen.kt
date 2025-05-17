@@ -34,12 +34,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.local.entities.TicketEntity
-import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tickets.TicketViewModel
 
 @Composable
 fun TicketScreen(
     ticketId: Int? = null,
-    viewModel: TicketViewModel,
+    viewModel: TicketsViewModel,
     navController: NavController,
     function: () -> Unit
 ) {

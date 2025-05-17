@@ -6,7 +6,7 @@ import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.local.entities.Tick
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.repository.TicketsRepository
 import kotlinx.coroutines.launch
 
-class TicketViewModel(
+class TicketsViewModel(
     private val ticketsRepository: TicketsRepository
 ) : ViewModel() {
     fun saveTicket(ticket: TicketEntity) {
