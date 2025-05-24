@@ -25,20 +25,25 @@ import androidx.navigation.toRoute
 import androidx.room.Room
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.ui.theme.Registrotecnicostarea1Theme
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.local.database.TecnicoDb
+import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.repository.PrioridadadesRepository
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.repository.TecnicosRepository
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.repository.TicketsRepository
+import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.navigation.PrioridadesNavHost
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.navigation.Screen
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.navigation.TecnicosNavHost
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tecnicos.TecnicosViewModel
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.navigation.TicketNavHost
+import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.prioridades.PrioridadesViewModel
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tickets.TicketsViewModel
 
 class MainActivity : ComponentActivity() {
     private lateinit var tecnicoDb: TecnicoDb
     private lateinit var tecnicosRepository: TecnicosRepository
     private lateinit var ticketsRepository: TicketsRepository
+    private lateinit var prioridadesRepository: PrioridadadesRepository
     private lateinit var tecnicosViewModel: TecnicosViewModel
     private lateinit var ticketViewModel: TicketsViewModel
+    private lateinit var prioridadesViewModel: PrioridadesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,9 +58,11 @@ class MainActivity : ComponentActivity() {
 
         tecnicosRepository = TecnicosRepository(tecnicoDb.TecnicoDao())
         ticketsRepository = TicketsRepository(tecnicoDb.TicketDao())
+        prioridadesRepository = PrioridadadesRepository(tecnicoDb.PrioridadDao())
 
         tecnicosViewModel = TecnicosViewModel(tecnicosRepository)
         ticketViewModel = TicketsViewModel(ticketsRepository)
+        prioridadesViewModel = PrioridadesViewModel(prioridadesRepository)
 
         setContent {
             val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
@@ -71,6 +78,12 @@ class MainActivity : ComponentActivity() {
                     lifecycleOwner = lifecycleOwner,
                     minActiveState = Lifecycle.State.STARTED
                 )
+            val prioridadList by tecnicoDb.PrioridadDao().getAll()
+                .collectAsStateWithLifecycle(
+                    initialValue = emptyList(),
+                    lifecycleOwner = lifecycleOwner,
+                    minActiveState = Lifecycle.State.STARTED
+                )
             Registrotecnicostarea1Theme {
                 val navController = rememberNavController()
                 NavHost(
@@ -80,7 +93,8 @@ class MainActivity : ComponentActivity() {
                     composable("home") {
                         HomeScreen(
                             onNavigateToTecnicos = { navController.navigate(Screen.TecnicoList) },
-                            onNavigateToTickets = { navController.navigate(Screen.TicketsList) }
+                            onNavigateToTickets = { navController.navigate(Screen.TicketsList) },
+                            onNavigateToPrioridades = { navController.navigate(Screen.PrioridadList) }
                         )
                     }
                     composable<Screen.TecnicoList> {
@@ -121,6 +135,25 @@ class MainActivity : ComponentActivity() {
                             navController = navController
                         )
                     }
+                    composable<Screen.PrioridadList> {
+                        val prioridadNavController = rememberNavController()
+                        PrioridadesNavHost(
+                            navHostController = prioridadNavController,
+                            prioridadList = prioridadList,
+                            viewModel = prioridadesViewModel,
+                            navController = navController
+                        )
+                    }
+                    composable<Screen.Prioridad> { backStack ->
+                        val prioridadNavController = rememberNavController()
+                        val prioridadId = backStack.toRoute<Screen.Prioridad>().prioridadId
+                        PrioridadesNavHost(
+                            navHostController = prioridadNavController,
+                            prioridadList = prioridadList,
+                            viewModel = prioridadesViewModel,
+                            navController = navController
+                        )
+                    }
                 }
             }
         }
@@ -130,7 +163,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun HomeScreen(
     onNavigateToTecnicos: () -> Unit,
-    onNavigateToTickets: () -> Unit
+    onNavigateToTickets: () -> Unit,
+    onNavigateToPrioridades: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -147,6 +181,9 @@ fun HomeScreen(
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Text("Ver Tickets")
+        }
+        Button(onClick = onNavigateToPrioridades) {
+            Text("Ver Prioridades")
         }
     }
 }
