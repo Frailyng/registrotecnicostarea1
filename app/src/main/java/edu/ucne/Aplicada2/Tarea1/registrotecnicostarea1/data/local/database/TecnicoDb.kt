@@ -15,7 +15,7 @@ import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.local.entities.Prio
         TicketEntity::class,
         Prioridades::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class TecnicoDb : RoomDatabase() {

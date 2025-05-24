@@ -101,7 +101,7 @@ fun PrioridadesScreen(
                     OutlinedTextField(
                         value = descripcion,
                         onValueChange = { descripcion = it },
-                        label = { Text("Nombre de la prioridad") },
+                        label = { Text("descripcion de la prioridad") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color.Blue,

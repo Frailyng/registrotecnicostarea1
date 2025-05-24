@@ -7,6 +7,7 @@ import androidx.room.Upsert
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.local.entities.Prioridades
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface PrioridadDao {
 
     @Upsert
