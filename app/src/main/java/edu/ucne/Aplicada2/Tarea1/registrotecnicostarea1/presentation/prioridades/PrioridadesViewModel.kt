@@ -24,3 +24,4 @@ class PrioridadesViewModel(
             prioridadadesRepository.delete(prioridad)
         }
     }
+}

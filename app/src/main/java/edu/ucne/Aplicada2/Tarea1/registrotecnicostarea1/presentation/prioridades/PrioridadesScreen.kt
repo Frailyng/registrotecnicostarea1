@@ -28,16 +28,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.local.entities.TecnicoEntity
-import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tecnicos.TecnicosViewModel
-import kotlinx.coroutines.launch
+import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.local.entities.Prioridades
 
 @Composable
 fun PrioridadesScreen(
@@ -46,18 +43,18 @@ fun PrioridadesScreen(
     navController: NavController,
     function: () -> Unit
 ) {
-    var nombres: String by remember { mutableStateOf("") }
-    var sueldo: Double by remember { mutableStateOf(0.0) }
+    var descripcion: String by remember { mutableStateOf("") }
+    var tiempo: Int by remember { mutableStateOf(0) }
     var errorMessage: String? by remember { mutableStateOf("") }
-    var editando by remember { mutableStateOf<TecnicoEntity?>(null) }
+    var editando by remember { mutableStateOf<Prioridades?>(null) }
 
-    LaunchedEffect(tecnicoId) {
-        if (tecnicoId != null && tecnicoId > 0){
-            val tecnico = viewModel.findTecnico(tecnicoId)
-            tecnico?.let {
+    LaunchedEffect(prioridadId) {
+        if (prioridadId != null && prioridadId > 0){
+            val prioridad = viewModel.findPrioridad(prioridadId)
+            prioridad?.let {
                 editando = it
-                nombres = it.nombres
-                sueldo = it.sueldo
+                descripcion = it.descripcion
+                tiempo = it.tiempo
             }
         }
     }
@@ -91,20 +88,20 @@ fun PrioridadesScreen(
                         .padding(8.dp)
                 ) {
                     Spacer(modifier = Modifier.height(32.dp))
-                    Text("Registro de tecnicos $tecnicoId")
+                    Text("Registro de prioridades $prioridadId")
 
                     OutlinedTextField(
-                        value = editando?.tecnicoId?.toString() ?: "0",
+                        value = editando?.prioridadId?.toString() ?: "0",
                         onValueChange = {},
-                        label = { Text("ID Técnico") },
+                        label = { Text("ID Prioridad") },
                         modifier = Modifier.fillMaxWidth(),
                         readOnly = true,
                         enabled = false
                     )
                     OutlinedTextField(
-                        value = nombres,
-                        onValueChange = { nombres = it },
-                        label = { Text("Nombre del técnico") },
+                        value = descripcion,
+                        onValueChange = { descripcion = it },
+                        label = { Text("Nombre de la prioridad") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color.Blue,
@@ -113,11 +110,11 @@ fun PrioridadesScreen(
                         )
                     )
                     OutlinedTextField(
-                        value = sueldo.toString(),
+                        value = tiempo.toString(),
                         onValueChange = { newValue ->
-                            sueldo = newValue.toDoubleOrNull() ?: 0.0
+                            tiempo = newValue.toIntOrNull() ?: 0
                         },
-                        label = { Text("Sueldo del tecnico") },
+                        label = { Text("tiempo de la prioridad") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color.Blue,
@@ -154,25 +151,25 @@ fun PrioridadesScreen(
 
                         OutlinedButton(
                             onClick = {
-                                if (nombres.isBlank()) {
-                                    errorMessage = "El nombre no puede estar vacio."
+                                if (descripcion.isBlank()) {
+                                    errorMessage = "la descripcion no puede estar vacio."
                                     return@OutlinedButton
                                 }
 
-                                if (sueldo <= 0.0) {
-                                    errorMessage = "El sueldo no puede ser cero o menor."
+                                if (tiempo <= 0) {
+                                    errorMessage = "El tiempo no puede ser cero o menor."
                                     return@OutlinedButton
                                 }
                                 //crear
-                                viewModel.saveTecnico(
-                                    TecnicoEntity(
-                                        tecnicoId = editando?.tecnicoId,
-                                        nombres = nombres,
-                                        sueldo = sueldo
+                                viewModel.savePrioridad(
+                                    Prioridades(
+                                        prioridadId = editando?.prioridadId,
+                                        descripcion = descripcion,
+                                        tiempo = tiempo
                                     )
                                 )
-                                nombres = ""
-                                sueldo = 0.0
+                                descripcion = ""
+                                tiempo = 0
                                 errorMessage = null
                                 editando = null
 
