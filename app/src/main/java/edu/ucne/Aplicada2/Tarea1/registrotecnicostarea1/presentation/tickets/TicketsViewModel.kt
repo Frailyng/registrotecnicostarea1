@@ -53,7 +53,6 @@ class TicketsViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    // Para Técnicos
     val tecnicos = tecnicosRepository.getAll().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -66,7 +65,6 @@ class TicketsViewModel @Inject constructor(
         getPrioridad()
     }
 
-    //saveTecnico
     private fun saveTicket() {
         viewModelScope.launch {
             if (_uiState.value.cliente.isNullOrBlank() && _uiState.value.prioridadId > 0

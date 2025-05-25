@@ -38,6 +38,7 @@ import java.util.Locale
 fun TicketListScreen(
     viewModel: TicketsViewModel = hiltViewModel(),
     goToTicket: (Int) -> Unit,
+    goToMensaje: (Int) -> Unit,
     createTicket: () -> Unit,
     deleteTicket: ((TicketEntity) -> Unit)? = null,
 ) {
@@ -45,6 +46,7 @@ fun TicketListScreen(
     TicketListBodyScreen(
         uiState = uiState,
         goToTicket = goToTicket,
+        goToMensaje = goToMensaje,
         createTicket = createTicket,
         deleteTicket = { ticket ->
             viewModel.onEvent(TicketEvent.TicketChange(ticket.ticketId ?: 0))
@@ -57,6 +59,7 @@ fun TicketListScreen(
 private fun TicketRow(
     it: TicketEntity,
     goToTicket: (Int) -> Unit,
+    goToMensaje: (Int) -> Unit,
     createTicket: () -> Unit,
     deleteTicket: (TicketEntity) -> Unit
 ) {
@@ -121,9 +124,19 @@ private fun TicketRow(
             horizontalArrangement = Arrangement.End,
             modifier = Modifier.fillMaxWidth()
         ) {
+
+            IconButton(onClick = { goToMensaje(it.ticketId ?: 0) }) {
+                Icon(
+                    imageVector = Icons.Default.MailOutline,
+                    contentDescription = "Chat",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+
             IconButton(onClick = { goToTicket(it.ticketId ?: 0) }) {
                 Icon(Icons.Default.Edit, contentDescription = "Editar", tint = MaterialTheme.colorScheme.primary)
             }
+
             IconButton(onClick = { deleteTicket(it) }) {
                 Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = MaterialTheme.colorScheme.error)
             }
@@ -141,6 +154,7 @@ fun Date.toFormattedString(): String {
 fun TicketListBodyScreen(
     uiState: TicketUiState,
     goToTicket: (Int) -> Unit,
+    goToMensaje: (Int) -> Unit,
     createTicket: () -> Unit,
     deleteTicket: (TicketEntity) -> Unit
 ){
@@ -164,6 +178,7 @@ fun TicketListBodyScreen(
                     TicketRow(
                         it = ticket,
                         goToTicket = goToTicket,
+                        goToMensaje = goToMensaje,
                         createTicket = { goToTicket(ticket.ticketId ?: 0) },
                         deleteTicket = deleteTicket
                     )
