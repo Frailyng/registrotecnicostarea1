@@ -2,6 +2,7 @@ package edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tickets
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,9 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -31,41 +36,44 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.local.entities.TicketEntity
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 
 @Composable
 fun TicketScreen(
-    ticketId: Int? = null,
-    viewModel: TicketsViewModel,
-    navController: NavController,
-    function: () -> Unit
+    viewModel: TicketsViewModel = hiltViewModel(),
+    ticketId: Int?,
+    goBack: () -> Unit
 ) {
-    var fecha: String by remember { mutableStateOf("") }
-    var prioridadId: Int by remember { mutableStateOf(0) }
-    var cliente: String by remember { mutableStateOf("") }
-    var asunto: String by remember { mutableStateOf("") }
-    var descripcion: String by remember { mutableStateOf("") }
-    var tecnicoId: Int? by remember { mutableStateOf(null) }
-    var errorMessage: String? by remember { mutableStateOf("") }
-    var editando by remember { mutableStateOf<TicketEntity?>(null) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(ticketId) {
-        if (ticketId != null && ticketId > 0) {
-            val ticket = viewModel.findTicket(ticketId)
-            ticket?.let {
-                editando = it
-                fecha = it.fecha
-                prioridadId = it.prioridadId
-                cliente = it.cliente
-                asunto = it.asunto
-                descripcion = it.descripcion
-                tecnicoId = it.tecnicoId
+        ticketId?.let {
+            if (it > 0){
+                viewModel.findTicket(it)
             }
         }
     }
 
+    TicketBodyScreen(
+        uiState = uiState,
+        viewModel::onEvent,
+        goBack = goBack
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TicketBodyScreen(
+    uiState: TicketUiState,
+    onEvent: (TicketEvent) -> Unit,
+    goBack: () -> Unit
+){
+    var expandedPrioridad by remember { mutableStateOf(false) }
+    var expandedTecnico by remember { mutableStateOf(false) }
     Scaffold { innerPadding ->
         Column(
             modifier = Modifier
@@ -77,13 +85,11 @@ fun TicketScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (navController != null) {
-                    IconButton(
-                        onClick = { navController.popBackStack() },
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    ) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "volver")
-                    }
+                IconButton(
+                    onClick = goBack,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                ) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "volver")
                 }
             }
             ElevatedCard(
@@ -95,20 +101,59 @@ fun TicketScreen(
                         .padding(8.dp)
                 ) {
                     Spacer(modifier = Modifier.height(32.dp))
-                    Text("Registro de tickets $ticketId")
+                    Text("Registro de tickets")
 
                     OutlinedTextField(
-                        value = editando?.ticketId?.toString() ?: "0",
+                        value = uiState.ticketId?.toString() ?: "Nuevo",
                         onValueChange = {},
                         label = { Text("ID Ticket") },
                         modifier = Modifier.fillMaxWidth(),
                         readOnly = true,
                         enabled = false
                     )
+
+                    //prioridad
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        OutlinedButton(
+                            onClick = { expandedPrioridad = true },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                uiState.prioridades.find { it.prioridadId == uiState.prioridadId }?.descripcion
+                                    ?: "Seleccione prioridad",
+                                modifier = Modifier.weight(1f),
+                                textAlign = TextAlign.Start
+                            )
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Prioridad")
+                        }
+                        DropdownMenu(
+                            expanded = expandedPrioridad,
+                            onDismissRequest = { expandedPrioridad = false },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            uiState.prioridades.forEach { prioridad ->
+                                DropdownMenuItem(
+                                    text = { Text(prioridad.descripcion) },
+                                    onClick = {
+                                        onEvent(
+                                            TicketEvent.PrioridadChange(
+                                                prioridad.prioridadId ?: 0
+                                            )
+                                        )
+                                        expandedPrioridad = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+
                     OutlinedTextField(
-                        value = fecha,
-                        onValueChange = { fecha = it },
-                        label = { Text("Fecha") },
+                        value = uiState.cliente ?: "",
+                        onValueChange = { onEvent(TicketEvent.ClienteChange(it)) },
+                        label = { Text("Nombre del cliente") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color.Blue,
@@ -116,33 +161,10 @@ fun TicketScreen(
                             focusedLabelColor = Color.Blue
                         )
                     )
+
                     OutlinedTextField(
-                        value = prioridadId.toString(),
-                        onValueChange = { newValue ->
-                            prioridadId = newValue.toIntOrNull() ?: 0
-                        },
-                        label = { Text("ID Prioridad") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color.Blue,
-                            unfocusedBorderColor = Color.Gray,
-                            focusedLabelColor = Color.Blue
-                        )
-                    )
-                    OutlinedTextField(
-                        value = cliente,
-                        onValueChange = { cliente = it },
-                        label = { Text("Cliente") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color.Blue,
-                            unfocusedBorderColor = Color.Gray,
-                            focusedLabelColor = Color.Blue
-                        )
-                    )
-                    OutlinedTextField(
-                        value = asunto,
-                        onValueChange = { asunto = it },
+                        value = uiState.asunto ?: "",
+                        onValueChange = { onEvent(TicketEvent.AsuntoChange(it)) },
                         label = { Text("Asunto") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -151,23 +173,11 @@ fun TicketScreen(
                             focusedLabelColor = Color.Blue
                         )
                     )
+
                     OutlinedTextField(
-                        value = descripcion,
-                        onValueChange = { descripcion = it },
-                        label = { Text("Descripción") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color.Blue,
-                            unfocusedBorderColor = Color.Gray,
-                            focusedLabelColor = Color.Blue
-                        )
-                    )
-                    OutlinedTextField(
-                        value = tecnicoId?.toString() ?: "",
-                        onValueChange = { newValue ->
-                            tecnicoId = newValue.toIntOrNull()
-                        },
-                        label = { Text("ID Técnico") },
+                        value = uiState.descripcion ?: "",
+                        onValueChange = { onEvent(TicketEvent.DescripcionChange(it)) },
+                        label = { Text("Descripcion") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color.Blue,
@@ -176,8 +186,40 @@ fun TicketScreen(
                         )
                     )
 
+                    //tecnico
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        OutlinedButton(
+                            onClick = { expandedTecnico = true },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                uiState.tecnicos.find { it.tecnicoId == uiState.tecnicoId }?.nombre
+                                    ?: "Seleccione técnico",
+                                modifier = Modifier.weight(1f),
+                                textAlign = TextAlign.Start
+                            )
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Técnico")
+                        }
+                        DropdownMenu(
+                            expanded = expandedTecnico,
+                            onDismissRequest = { expandedTecnico = false },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            uiState.tecnicos.forEach { tecnico ->
+                                DropdownMenuItem(
+                                    text = { Text(tecnico.nombre) },
+                                    onClick = {
+                                        onEvent(TicketEvent.TecnicoChange(tecnico.tecnicoId ?: 0))
+                                        expandedTecnico = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+
                     Spacer(modifier = Modifier.padding(2.dp))
-                    errorMessage?.let {
+                    uiState.errorMessage?.let {
                         Text(text = it, color = Color.Red)
                     }
                     Row(
@@ -187,14 +229,7 @@ fun TicketScreen(
                     ) {
                         OutlinedButton(
                             onClick = {
-                                fecha = ""
-                                prioridadId = 0
-                                cliente = ""
-                                asunto = ""
-                                descripcion = ""
-                                tecnicoId = null
-                                errorMessage = null
-                                editando = null
+                                onEvent(TicketEvent.New)
                             },
                             colors = ButtonDefaults.outlinedButtonColors(
                                 contentColor = Color.Blue
@@ -206,58 +241,12 @@ fun TicketScreen(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = "new button"
                             )
-                            Text(text = "Nuevo")
+                            Text("Nuevo")
                         }
-
                         OutlinedButton(
                             onClick = {
-                                if (fecha.isBlank()) {
-                                    errorMessage = "La fecha no puede estar vacía."
-                                    return@OutlinedButton
-                                }
-                                if (prioridadId <= 0) {
-                                    errorMessage = "El ID de prioridad debe ser mayor que cero."
-                                    return@OutlinedButton
-                                }
-                                if (cliente.isBlank()) {
-                                    errorMessage = "El cliente no puede estar vacío."
-                                    return@OutlinedButton
-                                }
-                                if (asunto.isBlank()) {
-                                    errorMessage = "El asunto no puede estar vacío."
-                                    return@OutlinedButton
-                                }
-                                if (descripcion.isBlank()) {
-                                    errorMessage = "La descripción no puede estar vacía."
-                                    return@OutlinedButton
-                                }
-                                val tecnicoIdValue = tecnicoId
-                                if (tecnicoIdValue != null && tecnicoIdValue <= 0) {
-                                    errorMessage = "El ID del técnico debe ser mayor que cero si se especifica."
-                                    return@OutlinedButton
-                                }
-
-                                viewModel.saveTicket(
-                                    TicketEntity(
-                                        ticketId = editando?.ticketId,
-                                        fecha = fecha,
-                                        prioridadId = prioridadId,
-                                        cliente = cliente,
-                                        asunto = asunto,
-                                        descripcion = descripcion,
-                                        tecnicoId = tecnicoId
-                                    )
-                                )
-                                fecha = ""
-                                prioridadId = 0
-                                cliente = ""
-                                asunto = ""
-                                descripcion = ""
-                                tecnicoId = null
-                                errorMessage = null
-                                editando = null
-
-                                navController.navigateUp()
+                                onEvent(TicketEvent.Save)
+                                goBack()
                             },
                             colors = ButtonDefaults.outlinedButtonColors(
                                 contentColor = Color.Blue

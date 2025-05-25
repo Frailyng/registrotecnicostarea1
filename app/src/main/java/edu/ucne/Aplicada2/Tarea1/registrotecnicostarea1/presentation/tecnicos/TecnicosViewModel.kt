@@ -2,43 +2,118 @@ package edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tecnicos
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.local.entities.TecnicoEntity
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.repository.TecnicosRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class TecnicosViewModel(
+@HiltViewModel
+class TecnicosViewModel @Inject constructor(
     private val tecnicosRepository: TecnicosRepository
 ): ViewModel() {
-    fun saveTecnico(tecnico: TecnicoEntity) {
-        viewModelScope.launch {
-            tecnicosRepository.save(tecnico)
+    private val _uiState = MutableStateFlow(TecnicoUiState())
+    val uiState = _uiState.asStateFlow()
+
+
+    fun onEvent(event: TecnicoEvent){
+        when (event) {
+            TecnicoEvent.Delete -> delete()
+            TecnicoEvent.New -> nuevo()
+            is TecnicoEvent.NombreChange -> onNombreChange(event.nombre)
+            TecnicoEvent.Save -> save()
+            is TecnicoEvent.SueldoChange -> onSueldoChange(event.sueldo)
+            is TecnicoEvent.TecnicoChange -> onTecnicoIdChange(event.tecnicoId)
         }
     }
 
-    suspend fun findTecnico(id: Int): TecnicoEntity? {
-        return tecnicosRepository.find(id)
-    }
 
-    fun deleteTecnico(tecnico: TecnicoEntity) {
+    init {
+        getTecnico()
+    }
+    //saveTecnico
+    private fun save() {
         viewModelScope.launch {
-            tecnicosRepository.delete(tecnico)
+            if (_uiState.value.nombre.isNullOrBlank() || _uiState.value.sueldo < 0.0){
+                _uiState.update {
+                    it.copy(errorMessage = "Campo vacios")
+                }
+            }
+            else{
+                tecnicosRepository.save(_uiState.value.toEntity())
+            }
+        }
+    }
+    private fun nuevo(){
+        _uiState.update {
+            it.copy(
+                tecnicoId = null,
+                nombre = "",
+                sueldo = 0.0,
+                errorMessage = null
+            )
         }
     }
 
-    /*companion object {
-       val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-           @Suppress("UNCHECKED_CAST")
-           override fun <T : ViewModel> create(
-               modelClass: Class<T>,
-               extras: CreationExtras
-           ): T {
-               // Get the Application object from extras
-               val application = checkNotNull(extras[APPLICATION_KEY])
+    //findTecnico
+    fun selectedTecnico(tecnicoId: Int){
+        viewModelScope.launch {
+            if(tecnicoId > 0){
+                val tecnico = tecnicosRepository.find(tecnicoId)
+                _uiState.update {
+                    it.copy(
+                        tecnicoId = tecnico?.tecnicoId,
+                        nombre = tecnico?.nombre ?: "",
+                        sueldo = tecnico?.sueldo ?: 0.0
+                    )
+                }
+            }
+        }
+    }
 
+    //deleteTecnico
+    private fun delete() {
+        viewModelScope.launch {
+            tecnicosRepository.delete(_uiState.value.toEntity())
+        }
+    }
 
-               return  TecnicosViewModel(
+    private fun getTecnico() {
+        viewModelScope.launch {
+            tecnicosRepository.getAll().collect { tecnicos ->
+                _uiState.update {
+                    it.copy(tecnicos = tecnicos)
+                }
+            }
+        }
+    }
 
-               ) as T
-           }
-       }*/
+    private fun onNombreChange(nombre: String) {
+        _uiState.update {
+            it.copy(nombre = nombre)
+        }
+    }
+
+    private fun onSueldoChange(sueldo: Double) {
+        _uiState.update {
+            it.copy(sueldo = sueldo)
+        }
+    }
+
+    private fun onTecnicoIdChange(tecnicoId: Int) {
+        _uiState.update {
+            it.copy(tecnicoId = tecnicoId)
+        }
+    }
+
 }
+
+
+fun TecnicoUiState.toEntity() = TecnicoEntity(
+    tecnicoId = tecnicoId,
+    nombre = nombre ?: "",
+    sueldo = sueldo ?: 0.0
+)
