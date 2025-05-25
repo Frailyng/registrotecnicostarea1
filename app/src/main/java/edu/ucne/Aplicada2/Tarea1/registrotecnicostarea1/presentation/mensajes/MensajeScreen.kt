@@ -102,7 +102,6 @@ fun MensajeBodyScreen(
                 }
             }
 
-            // Esto hará scroll al tope cuando cambia la lista
             LaunchedEffect(uiState.mensajes.size) {
                 listState.animateScrollToItem(0)
             }
@@ -136,7 +135,7 @@ fun MensajeBodyScreen(
             OutlinedTextField(
                 value = uiState.remitente ?: "",
                 onValueChange = { onEvent(MensajeEvent.RemitenteChange(it)) },
-                label = { Text("Name") },
+                label = { Text("Nombre") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
@@ -146,7 +145,7 @@ fun MensajeBodyScreen(
             OutlinedTextField(
                 value = uiState.contenido ?: "",
                 onValueChange = { onEvent(MensajeEvent.ContenidoChange(it)) },
-                label = { Text("Message") },
+                label = { Text("Mensaje") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
@@ -159,7 +158,7 @@ fun MensajeBodyScreen(
                     .align(Alignment.End)
                     .padding(top = 8.dp)
             ) {
-                Text("Save")
+                Text("Guardar")
             }
         }
     }
@@ -182,7 +181,7 @@ fun MensajeRow(
             .padding(12.dp)
     ) {
         Text(
-            text = "By ${mensaje.remitente} on ${SimpleDateFormat("dd/MM/yyyy (HH:mm)", Locale.getDefault()).format(mensaje.fecha)}   ${mensaje.tipoRemitente}",
+            text = "Por ${mensaje.remitente} en ${SimpleDateFormat("dd/MM/yyyy (HH:mm)", Locale.getDefault()).format(mensaje.fecha)}   ${mensaje.tipoRemitente}",
             style = MaterialTheme.typography.labelSmall,
             color = Color.Gray
         )
