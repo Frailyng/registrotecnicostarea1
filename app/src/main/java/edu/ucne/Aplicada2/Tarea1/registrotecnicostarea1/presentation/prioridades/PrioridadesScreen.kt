@@ -1,4 +1,5 @@
-package edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tecnicos
+package edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.prioridades
+
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,48 +35,46 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
-
 @Composable
-fun TecnicoScreen(
-    tecnicoId: Int?,
-    viewModel: TecnicosViewModel = hiltViewModel(),
+fun PrioridadesScreen(
+    prioridadId: Int?,
+    viewModel: PrioridadesViewModel = hiltViewModel(),
     goBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(tecnicoId) {
-        println("id $tecnicoId")
-        tecnicoId?.let {
+    LaunchedEffect(prioridadId) {
+        prioridadId?.let {
             if (it > 0){
-                viewModel.selectedTecnico(it)
+                viewModel.selectedPrioridad(it)
             }
         }
     }
-    TecnicoBodyScreen(
+
+    PrioridadBodyScreen(
         uiState = uiState,
         viewModel::onEvent,
         goBack = goBack
     )
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TecnicoBodyScreen(
-    uiState: TecnicoUiState,
-    onEvent: (TecnicoEvent) -> Unit,
+fun PrioridadBodyScreen(
+    uiState: PrioridadUiState,
+    onEvent: (PrioridadEvent) -> Unit,
     goBack: () -> Unit
 ){
     Scaffold { innerPadding ->
-        Column(
+        Column (
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(8.dp)
-        ) {
-            Row(
+        ){
+            Row (
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
-            ) {
+            ){
                 IconButton(
                     onClick = goBack,
                     modifier = Modifier.align(Alignment.CenterVertically)
@@ -82,42 +82,32 @@ fun TecnicoBodyScreen(
                     Icon(Icons.Default.ArrowBack, contentDescription = "volver")
                 }
             }
-            ElevatedCard(
+            ElevatedCard (
                 modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
+            ){
+                Column (
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
-                ) {
+                ){
                     Spacer(modifier = Modifier.height(32.dp))
-                    Text("Registro de tecnicos ")
-
-
-                    OutlinedTextField(
-                        value = uiState.tecnicoId?.toString() ?: "Nuevo",
-                        onValueChange = {},
-                        modifier = Modifier.fillMaxWidth(),
-                        readOnly = true,
-                        enabled = false
-                    )
+                    Text("Registro de prioridades")
 
                     OutlinedTextField(
-                        value = uiState.nombre ?: "",
-                        onValueChange = { onEvent(TecnicoEvent.NombreChange(it))},
-                        label = { Text("Nombre del técnico") },
+                        value = uiState.descripcion ?: "",
+                        onValueChange = { onEvent(PrioridadEvent.DescripcionChange(it))},
+                        label = {Text("Descripcion de la prioridad")},
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color.Blue,
-                            unfocusedBorderColor = Color.Gray,
+                            unfocusedTextColor = Color.Gray,
                             focusedLabelColor = Color.Blue
                         )
                     )
-
                     OutlinedTextField(
-                        value = uiState.sueldo.toString(),
-                        onValueChange = { onEvent(TecnicoEvent.SueldoChange(it.toDouble()))},
-                        label = { Text("Sueldo del tecnico") },
+                        value = uiState.tiempo.toString(),
+                        onValueChange = {onEvent(PrioridadEvent.TiempoChange(it.toInt()))},
+                        label = {Text("Tiempo de la prioridad")},
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color.Blue,
@@ -130,14 +120,14 @@ fun TecnicoBodyScreen(
                     uiState.errorMessage?.let {
                         Text(text = it, color = Color.Red)
                     }
-                    Row(
+                    Row (
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    ){
                         OutlinedButton(
                             onClick = {
-                                onEvent(TecnicoEvent.New)
+                                onEvent(PrioridadEvent.New)
                             },
                             colors = ButtonDefaults.outlinedButtonColors(
                                 contentColor = Color.Blue
@@ -149,11 +139,12 @@ fun TecnicoBodyScreen(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = "new button"
                             )
-                            Text("Nuevo")
+                            Text(text = "Nuevo")
                         }
+                        val scope = rememberCoroutineScope()
                         OutlinedButton(
                             onClick = {
-                                onEvent(TecnicoEvent.Save)
+                                onEvent(PrioridadEvent.Save)
                                 goBack()
                             },
                             colors = ButtonDefaults.outlinedButtonColors(
@@ -174,19 +165,3 @@ fun TecnicoBodyScreen(
         }
     }
 }
-/*@Preview(showBackground = true)
-@Composable
-private fun TecnicoPreview() {
-    val navController = rememberNavController()
-    val viewModel = TecnicosViewModel(
-        tecnicosRepository = TODO()
-    )
-    RegistroTecnicosTheme {
-        TecnicoScreen(
-            tecnicoId = null,
-            viewModel = viewModel,
-            navController = navController
-        ) {}
-    }
-}
-*/

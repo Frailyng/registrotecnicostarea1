@@ -1,4 +1,4 @@
-package edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tecnicos
+package edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.prioridades
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,33 +28,32 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.local.entities.TecnicoEntity
+import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.local.entities.Prioridades
 
 @Composable
-fun TecnicoListScreen(
-    viewModel: TecnicosViewModel = hiltViewModel(),
-    goToTecnico: (Int) -> Unit,
-    createTecnico: () -> Unit,
-    deleteTecnico: ((TecnicoEntity) -> Unit)? = null
+fun PrioridadListScreen(
+    viewModel: PrioridadesViewModel = hiltViewModel(),
+    goToPrioridad: (Int) -> Unit,
+    createPrioridad: () -> Unit,
+    deletePrioridad: ((Prioridades) -> Unit)? = null
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    TecnicoListBodyScreen(
+    PrioridadListBodyScreen(
         uiState = uiState,
-        goToTecnico = goToTecnico,
-        createTecnico = createTecnico,
-        deleteTecnico = { tecnico ->
-            viewModel.onEvent(TecnicoEvent.TecnicoChange(tecnico.tecnicoId ?: 0))
-            viewModel.onEvent(TecnicoEvent.Delete)
+        goToPrioridad = goToPrioridad,
+        createPrioridad = createPrioridad,
+        deletePrioridad = { prioridad ->
+            viewModel.onEvent(PrioridadEvent.PrioridadChange(prioridad.prioridadId ?: 0))
+            viewModel.onEvent(PrioridadEvent.Delete)
         }
     )
 }
 
-
 @Composable
-private fun TecnicoRow(
-    it: TecnicoEntity,
-    goToTecnico: () -> Unit,
-    deleteTecnico:(TecnicoEntity) -> Unit
+private fun PrioridadRow(
+    it: Prioridades,
+    goToPrioridad: () -> Unit,
+    deletePrioridad: (Prioridades) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -62,18 +61,18 @@ private fun TecnicoRow(
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        Text(modifier = Modifier.weight(1f), text = it.tecnicoId.toString(), color = Color.Black)
+        Text(modifier = Modifier.weight(1f), text = it.prioridadId.toString(), color = Color.Black)
         Text(
             modifier = Modifier.weight(2f),
-            text = it.nombre,
+            text = it.descripcion,
             style = MaterialTheme.typography.titleMedium,
             color = Color.Black
         )
-        Text(modifier = Modifier.weight(2f), text = it.sueldo.toString(), color = Color.Black)
-        IconButton(onClick = goToTecnico) {
+        Text(modifier = Modifier.weight(2f), text = it.tiempo.toString(), color = Color.Black)
+        IconButton(onClick = goToPrioridad) {
             Icon(Icons.Default.Edit, contentDescription = "Editar", tint = MaterialTheme.colorScheme.primary)
         }
-        IconButton(onClick = {deleteTecnico(it)}) {
+        IconButton(onClick = {deletePrioridad(it)}) {
             Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = MaterialTheme.colorScheme.error)
         }
 
@@ -81,28 +80,24 @@ private fun TecnicoRow(
     HorizontalDivider()
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TecnicoListBodyScreen(
-    uiState: TecnicoUiState,
-    goToTecnico: (Int) -> Unit,
-    createTecnico: () -> Unit,
-    deleteTecnico: (TecnicoEntity) -> Unit
+fun PrioridadListBodyScreen(
+    uiState: PrioridadUiState,
+    goToPrioridad: (Int) -> Unit,
+    createPrioridad: () -> Unit,
+    deletePrioridad: (Prioridades) -> Unit
 ){
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("Lista de Tecnicos") })
+                title = { Text("Lista de Prioridades") })
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = createTecnico
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Create a new Ticket"
-                )
+            FloatingActionButton(onClick = createPrioridad) {
+                Icon(Icons.Filled.Add, "Agregar nueva")
             }
         }
     ) { padding ->
@@ -113,14 +108,40 @@ fun TecnicoListBodyScreen(
                 .padding(padding)
         ) {
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                items(uiState.tecnicos) { tecnico ->
-                    TecnicoRow(
-                        it = tecnico,
-                        goToTecnico = { goToTecnico(tecnico.tecnicoId ?: 0) },
-                        deleteTecnico = deleteTecnico
+                items(uiState.prioridades){ prioridad ->
+                    PrioridadRow(
+                        it = prioridad,
+                        goToPrioridad = {
+                            goToPrioridad(prioridad.prioridadId ?: 0)
+                        },
+                        deletePrioridad = deletePrioridad
                     )
                 }
             }
         }
     }
 }
+
+/*@Preview
+@Composable
+private fun Preview() {
+    val prioridades = listOf(
+        Prioridades(
+            prioridadId = 1,
+            descripcion = "Bajo",
+            tiempo = 1
+        ),
+        Prioridades(
+            prioridadId = 2,
+            descripcion = "Medio",
+            tiempo = 3
+        )
+    )
+    Registrotecnicostarea1Theme {
+        PrioridadListScreen(
+            prioridadList = prioridades,
+            onEdit = {},
+            onDelete = {}
+        )
+    }
+}*/
