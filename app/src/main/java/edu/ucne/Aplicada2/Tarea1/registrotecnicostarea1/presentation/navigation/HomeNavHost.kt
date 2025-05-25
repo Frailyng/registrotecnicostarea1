@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.Home.HomeScreen
+import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.mensajes.MensajeScreen
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.prioridades.PrioridadListScreen
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.prioridades.PrioridadesScreen
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tecnicos.TecnicoListScreen
@@ -73,6 +74,10 @@ fun HomeNavHost(
                 goToTicket = { id ->
                     navHostController.navigate(Screen.Tickets(id ?: 0))
                 },
+                goToMensaje = { ticketId ->
+                    require(ticketId != null) { "Ticket ID no puede ser null" }
+                    navHostController.navigate(Screen.Mensaje(ticketId))
+                },
                 createTicket = {
                     navHostController.navigate((Screen.Tickets(0)))
                 }
@@ -84,6 +89,15 @@ fun HomeNavHost(
             TicketScreen(
                 ticketId = ticketId,
                 goBack = { navHostController.popBackStack()}
+            )
+        }
+
+        composable<Screen.Mensaje> { backStack ->
+            val ticketId = backStack.toRoute<Screen.Mensaje>().ticketId
+            require(ticketId != null) { "Ticket ID no puede ser null para MensajeScreen" }
+            MensajeScreen(
+                ticketId = ticketId,
+                goBack = { navHostController.popBackStack() }
             )
         }
     }
