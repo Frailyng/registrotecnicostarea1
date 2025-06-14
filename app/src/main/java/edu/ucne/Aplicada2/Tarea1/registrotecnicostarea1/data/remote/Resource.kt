@@ -1,4 +1,4 @@
-package edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.remote.dto
+package edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.remote
 
 sealed class Resource<T>(val data: T? = null, val message: String? = null) {
     class Success<T>(data: T): Resource<T>(data)
