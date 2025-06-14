@@ -108,7 +108,7 @@ fun MensajeBodyScreen(
 
             Divider(modifier = Modifier.padding(vertical = 8.dp))
 
-            Text("Reply", style = MaterialTheme.typography.titleMedium)
+            Text("Responder", style = MaterialTheme.typography.titleMedium)
 
             // Remitente radio buttons
             Row(verticalAlignment = Alignment.CenterVertically) {
