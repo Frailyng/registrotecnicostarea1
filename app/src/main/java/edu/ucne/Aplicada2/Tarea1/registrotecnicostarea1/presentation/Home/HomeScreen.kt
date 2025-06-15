@@ -135,18 +135,18 @@ fun HomeScreen(
                         .border(
                             width = 1.dp,
                             color = Color.Gray,
-                            shape = RoundedCornerShape(8.dp)
+                            shape = RoundedCornerShape(12.dp)
                         ),
-                    shape = RoundedCornerShape(8.dp),
+                    shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        backgroundColor = Color.Transparent,
-                        contentColor = Color.Black
+                        backgroundColor = Color(0xFFF5F5F5),
+                        contentColor = Color.DarkGray
                     )
                 ) {
                     Text(
                         text = "Registro Compras",
-                        fontSize = 18.sp,
-                        color = Color.Black
+                        fontSize = 16.sp,
+                        color = Color.DarkGray
                     )
                 }
 

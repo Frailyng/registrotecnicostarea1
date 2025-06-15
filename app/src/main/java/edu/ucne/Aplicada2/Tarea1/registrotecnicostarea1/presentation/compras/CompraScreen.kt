@@ -131,7 +131,7 @@ fun CompraBodyScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF272D4D)
+                    containerColor = Color(0xFF00695C) // Changed to vibrant teal
                 )
             )
         },

@@ -15,7 +15,7 @@ import kotlin.jvm.java
 @InstallIn(SingletonComponent::class)
 @Module
 object ApiModule {
-    const val BASE_URL = "http://apip2compras.somee.com/"
+    const val BASE_URL = "http://apip2compras.somee.com"
 
     @Provides
     @Singleton
