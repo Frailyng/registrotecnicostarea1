@@ -2,7 +2,7 @@ package edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.compras
 
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.remote.dto.CompraDto
 
-class CompraUiState(
+data class CompraUiState(
     val compraId: Int? = null,
     val descripcion: String = "",
     val monto: Double = 0.0,

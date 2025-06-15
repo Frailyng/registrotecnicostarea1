@@ -106,13 +106,13 @@ class CompraViewModel @Inject constructor(
 
             if (_uiState.value.descripcion.isNullOrBlank()) {
                 _uiState.update {
-                    it.copy(errorNombre = "Este campo es obligatorio *")
+                    it.copy(errorDescripcion = "Este campo es obligatorio *")
                 }
                 error = true
             }
             if (_uiState.value.monto <= 0) {
                 _uiState.update {
-                    it.copy(errorBalance = "Este campo es obligatorio y debe ser mayor que cero *")
+                    it.copy(errorMonto = "Este campo es obligatorio y debe ser mayor que cero *")
                 }
                 error = true
             }
@@ -179,7 +179,7 @@ class CompraViewModel @Inject constructor(
                                 it.copy(
                                     compraId = compra?.compraId,
                                     descripcion = compra?.descripcion ?: "",
-                                    balance = compra?.monto ?: 0.0
+                                    monto = compra?.monto ?: 0.0
                                 )
                             }
                         }
@@ -210,7 +210,7 @@ class CompraViewModel @Inject constructor(
                     is Resource.Success -> {
                         _uiState.update {
                             it.copy(
-                                usuarios = result.data ?: emptyList(),
+                                compras = result.data ?: emptyList(),
                                 isLoading = false
                             )
                         }
