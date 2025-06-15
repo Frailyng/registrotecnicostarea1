@@ -38,7 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.data.remote.dto.CompraDto
 
 @Composable
-fun UsuarioListScreen(
+fun CompraListScreen(
     viewModel: CompraViewModel = hiltViewModel(),
     createCompra: () -> Unit,
     goToCompra: (Int) -> Unit,

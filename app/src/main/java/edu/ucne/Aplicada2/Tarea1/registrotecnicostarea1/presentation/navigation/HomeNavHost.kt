@@ -13,6 +13,8 @@ import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tecnicos.Te
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tecnicos.TecnicoScreen
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tickets.TicketListScreen
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.tickets.TicketScreen
+import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.compras.CompraListScreen
+import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.compras.CompraScreen
 
 @Composable
 fun HomeNavHost(
@@ -97,6 +99,24 @@ fun HomeNavHost(
             require(ticketId != null) { "Ticket ID no puede ser null para MensajeScreen" }
             MensajeScreen(
                 ticketId = ticketId,
+                goBack = { navHostController.popBackStack() }
+            )
+        }
+
+        composable<Screen.CompraList> {
+            CompraListScreen (
+                goToCompra = { id ->
+                    navHostController.navigate(Screen.Compra(id))
+                },
+                createCompra = {
+                    navHostController.navigate(Screen.Compra(null))
+                },
+                goBack = { navHostController.popBackStack() }
+            )
+        }
+
+        composable <Screen.Compra>{ backStack ->
+            CompraScreen(
                 goBack = { navHostController.popBackStack() }
             )
         }
