@@ -126,6 +126,30 @@ fun HomeScreen(
                         color = Color.DarkGray
                     )
                 }
+
+                OutlinedButton(
+                    onClick = { navController.navigate(Screen.CompraList) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                        .border(
+                            width = 1.dp,
+                            color = Color.Gray,
+                            shape = RoundedCornerShape(12.dp)
+                        ),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        backgroundColor = Color(0xFFF5F5F5),
+                        contentColor = Color.DarkGray
+                    )
+                ) {
+                    Text(
+                        text = "Registro Compras",
+                        fontSize = 16.sp,
+                        color = Color.DarkGray
+                    )
+                }
+
             }
         }
     }

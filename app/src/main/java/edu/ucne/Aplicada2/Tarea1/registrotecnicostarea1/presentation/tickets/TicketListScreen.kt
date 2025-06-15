@@ -68,54 +68,37 @@ private fun TicketRow(
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        // ID
+        // Ticket # y Fecha en la misma linea
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Ticket #: ${it.ticketId?.toString() ?: "N/A"}",
+                color = Color.Black,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = it.fecha.toFormattedString(),
+                color = Color.Black,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+
+        // Empresa
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = "ID: ${it.ticketId?.toString() ?: "N/A"}",
+            text = "Empresa: ${it.cliente}",
             color = Color.Black,
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        // Fecha
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "Fecha: ${it.fecha.toFormattedString()}",
-            color = Color.Black
-        )
-
-        // Prioridad
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "Prioridad: ${it.prioridadId?.toString() ?: "N/A"}",
-            color = Color.Black
-        )
-
-        // Cliente
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "Cliente: ${it.cliente}",
-            color = Color.Black
+            style = MaterialTheme.typography.bodyMedium
         )
 
         // Asunto
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = "Asunto: ${it.asunto}",
-            color = Color.Black
-        )
-
-        // Técnico
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "Técnico: ${it.tecnicoId?.toString() ?: "N/A"}",
-            color = Color.Black
-        )
-
-        // Descripción
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "Descripción: ${it.descripcion}",
-            color = Color.Black
+            color = Color.Black,
+            style = MaterialTheme.typography.bodyMedium
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -124,7 +107,6 @@ private fun TicketRow(
             horizontalArrangement = Arrangement.End,
             modifier = Modifier.fillMaxWidth()
         ) {
-
             IconButton(onClick = { goToMensaje(it.ticketId ?: 0) }) {
                 Icon(
                     imageVector = Icons.Default.MailOutline,

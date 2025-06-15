@@ -40,7 +40,9 @@ android {
     buildFeatures {
         compose = true
     }
+
 }
+
 
 dependencies {
     //navigation
@@ -55,13 +57,15 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
 
+
     implementation("androidx.compose.foundation:foundation:1.5.0")
 
     //optional
     implementation("androidx.room:room-ktx:2.6.1")
     implementation("androidx.compose.material3:material3:1.1.0-alpha02")
-    implementation("androidx.compose.material:material:1.4.0")
-    implementation("androidx.compose.material:material:1.3.1")
+    implementation ("androidx.compose.material:material:1.4.0")
+    implementation("androidx.compose.material:material:1.3.1") // Usa la última versión
+
 
     //Hilt
     implementation("com.google.dagger:hilt-android:2.51")
@@ -89,4 +93,5 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
 }
