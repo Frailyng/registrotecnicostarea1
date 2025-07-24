@@ -24,12 +24,52 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import android.Manifest
+import android.content.Context
+import android.os.Build
+import androidx.compose.material3.Button
+import androidx.compose.runtime.LaunchedEffect
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.Common.NotificationHandler
 import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.navigation.Screen
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
-    navController: NavController
+    navController: NavController,
+    context: Context
 ) {
+    //notificaciones
+    // Solo necesitamos pedir permiso en Android 13 (TIRAMISU) o superior
+    val postNotificationPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+    } else {
+        // En versiones anteriores, el permiso se concede implícitamente
+        null
+    }
+
+    val notificationHandler = NotificationHandler(context)
+
+    // Solicita el permiso cuando la pantalla se carga por primera vez
+    LaunchedEffect(key1 = true) {
+        if (postNotificationPermission != null &&
+            !postNotificationPermission.status.isGranted) {
+            postNotificationPermission.launchPermissionRequest()
+        }
+    }
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Button(onClick = {
+            notificationHandler.showSimpleNotification()
+        }) {
+            Text(text = "Mostrar Notificación")
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -128,7 +168,7 @@ fun HomeScreen(
                 }
 
                 OutlinedButton(
-                    onClick = { navController.navigate(Screen.CompraList) },
+                    onClick = { navController.navigate(Screen.CompraList)},
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)
@@ -145,6 +185,29 @@ fun HomeScreen(
                 ) {
                     Text(
                         text = "Registro Compras",
+                        fontSize = 16.sp,
+                        color = Color.DarkGray
+                    )
+                }
+
+                OutlinedButton(
+                    onClick = { notificationHandler.showSimpleNotification() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                        .border(
+                            width = 1.dp,
+                            color = Color.Gray,
+                            shape = RoundedCornerShape(12.dp)
+                        ),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        backgroundColor = Color(0xFFF5F5F5),
+                        contentColor = Color.DarkGray
+                    )
+                ) {
+                    Text(
+                        text = "Mostrar notificacion",
                         fontSize = 16.sp,
                         color = Color.DarkGray
                     )

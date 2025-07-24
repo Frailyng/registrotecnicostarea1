@@ -1,5 +1,6 @@
 package edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.navigation
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -18,7 +19,8 @@ import edu.ucne.Aplicada2.Tarea1.registrotecnicostarea1.presentation.compras.Com
 
 @Composable
 fun HomeNavHost(
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    context: Context
 ){
     NavHost(
         navController = navHostController,
@@ -26,7 +28,8 @@ fun HomeNavHost(
     ) {
         //inicio
         composable <Screen.Home> {
-            HomeScreen(navController = navHostController)
+            HomeScreen(navController = navHostController,
+                context = context)
         }
 
         composable <Screen.PrioridadList> {
